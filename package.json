@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "proxy": "http://127.0.0.1:4000",
+  "proxy": "https://dhanyabuilders-backend.onrender.com/",
   "version": "0.1.0",
   "private": true,
   "scripts": {
