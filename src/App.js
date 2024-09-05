@@ -31,6 +31,9 @@ import MapScreen from './screens/MapScreen';
 import DashboardScreen from './screens/DashboardScreen';
 import SupportScreen from './screens/SupportScreen';
 import ChatBox from './components/ChatBox';
+import axios from 'axios';
+
+axios.defaults.baseURL = 'https://dhanyabuilders-backend.onrender.com/';
 
 function App() {
   const cart = useSelector((state) => state.cart);
