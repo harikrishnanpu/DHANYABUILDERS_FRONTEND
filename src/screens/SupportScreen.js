@@ -6,10 +6,7 @@ import MessageBox from '../components/MessageBox';
 let allUsers = [];
 let allMessages = [];
 let allSelectedUser = {};
-const ENDPOINT =
-  window.location.host.indexOf('localhost') >= 0
-    ? 'https://dhanyabuilders-backend.onrender.com/'
-    : window.location.host;
+const ENDPOINT = 'https://dhanyabuilders-backend.onrender.com/'
 
 export default function SupportScreen() {
   const [selectedUser, setSelectedUser] = useState({});
