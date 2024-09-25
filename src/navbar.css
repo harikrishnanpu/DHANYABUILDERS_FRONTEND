@@ -35,6 +35,12 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
+
+  li{
+    background-color: var(--color-white-200);
+    padding: 3px 8px;
+    border-radius: 8px;
+  }
   
   html {
     font-size: 100%;
@@ -75,12 +81,7 @@
     padding: 5rem 0 2rem;
   }
   
-  .container {
-    max-width: 80rem;
-    height: auto;
-    margin: 0 auto;
-    padding: 0 1.25rem;
-  }
+
   
   .centered {
     text-align: center;
@@ -118,20 +119,17 @@
   }
   
   .header {
-    position: fixed;
+    padding: 0 1rem;
     top: 0;
     left: 0;
     z-index: 100;
-    width: 100%;
+    width: 100% !important;
     height: auto;
     margin: 0 auto;
     background: var(--color-white-100);
     box-shadow: var(--shadow-medium);
   }
 
-  main{
-    margin-top: 40px;
-  }
   
   .navbar {
     display: grid;
@@ -141,11 +139,11 @@
     height: auto;
     padding-top: 0.5rem;
   }
-  @media only screen and (min-width: 62rem) {
+  @media only screen and (min-width: 1350px) {
 
-    main{
-      margin-top: 0 !important;
-    }
+    /* main{
+      margin-top:  !important;
+    } */
 
     .navbar {
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -208,7 +206,7 @@
     color: var(--color-white-500);
     background: transparent;
   }
-  @media only screen and (min-width: 62rem) {
+  @media only screen and (min-width: 1350px) {
     .search {
       justify-self: center;
       grid-column: initial;
@@ -217,7 +215,7 @@
       height: auto;
     }
     .search-form {
-      max-width: 30rem;
+      max-width: 25rem;
     }
   }
   
@@ -233,6 +231,7 @@
     box-shadow: var(--shadow-medium);
     transition: all 0.45s ease-in-out;
   }
+
   .menu.is-active {
     top: 0;
     width: 100%;
@@ -258,7 +257,7 @@
     outline: none;
     color: var(--color-red-400);
   }
-  @media only screen and (min-width: 36rem) {
+  @media only screen and (min-width: 700px) {
     .menu {
       position: relative;
       justify-self: end;
@@ -297,7 +296,7 @@
     transform: rotate(0deg);
     transition: 0.35s ease;
   }
-  @media only screen and (min-width: 36rem) {
+  @media only screen and (min-width: 700px) {
     .burger {
       display: none;
       visibility: hidden;

@@ -28,7 +28,7 @@ body {
 
 main {
   grid-area: main;
-  padding: 3rem;
+  padding: 1rem;
 }
 footer {
   grid-area: footer;
@@ -60,7 +60,7 @@ li {
 }
 
 button {
-  padding: 1rem;
+  /* padding: 1rem; */
   border-radius: 0.5rem;
   border: 0.1rem #a4a4a4 solid;
   font-size: 1.6rem;

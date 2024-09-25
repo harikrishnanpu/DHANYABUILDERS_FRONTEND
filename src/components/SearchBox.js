@@ -11,7 +11,7 @@ export default function SearchBox() {
  
   return (
     <>
-        <i onClick={submitHandler} style={{fontSize: 20,color:'gray'}} className="fa fa-search"></i>
+        <i onClick={submitHandler} style={{fontSize: 20,color:'gray',paddingRight: '20px', cursor: 'pointer'}} className="fa fa-search"></i>
         <input type="text" id='q' name="q" className="search-input" placeholder="Search Projects" onChange={(e) => setName(e.target.value)}/>
     </>
   );

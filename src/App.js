@@ -34,7 +34,7 @@ import ChatBox from './components/ChatBox';
 import axios from 'axios';
 import AttendenceScreen from './screens/AttendenceScreen';
 
-axios.defaults.baseURL = 'https://dhanyabuilders-backend.onrender.com/';
+axios.defaults.baseURL = 'http://localhost:4000/'; // 
 
 function App() {
   const cart = useSelector((state) => state.cart);
@@ -77,10 +77,10 @@ const sidebarClose = ()=>{
 
   return (
     <BrowserRouter>
-      <div className="grid-container">
+      <div className="">
 
-<header className="header" id="header">
-   <nav className="navbar container">
+{ window.location.pathname === '/signin' ? " " : ( <header className="header mb-8" id="header">
+   <nav className="navbar">
       <a href="/" className="brand">Dhanya Builders</a>
       <div className="search">
          <form className="search-form">
@@ -91,7 +91,7 @@ const sidebarClose = ()=>{
       <div ref={navbarMenu} className="menu" id="menu">
         <ul className="menu-inner">
           {userInfo && 
-            <li className="menu-item"><a href="/profile" onClick={sidebarClose} ref={menuLink} className="menu-link">Hi, {userInfo.name}</a></li>
+            <li className="menu-item"><a href="/profile" onClick={sidebarClose} ref={menuLink} className="menu-link">Profile</a></li>
           }
       {userInfo && userInfo.isAdmin && (
         <li className="menu-item"><a href="/dashboard" onClick={sidebarClose} ref={menuLink} className="menu-link">Admin</a></li>
@@ -122,9 +122,10 @@ const sidebarClose = ()=>{
          <span className="burger-line"></span>
       </div>
    </nav>
-</header>
+</header> )}
 
-        <main style={{overflow:'scroll'}}>
+        <main>
+
           <Routes>
             <Route path="/seller/:id" element={<SellerScreen />}></Route>
             <Route path="/cart" element={<CartScreen />}></Route>
@@ -273,11 +274,12 @@ const sidebarClose = ()=>{
 
             <Route path="/" element={<HomeScreen />} exact></Route>
           </Routes>
+          {userInfo && !userInfo.isAdmin && <ChatBox userInfo={userInfo} />}
         </main>
-        <footer className="row center">
+        {/* <footer className="row center">
           {userInfo && !userInfo.isAdmin && <ChatBox userInfo={userInfo} />}
           <div>All right reserved</div>{' '}
-        </footer>
+        </footer> */}
       </div>
     </BrowserRouter>
   );
