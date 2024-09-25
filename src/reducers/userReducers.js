@@ -18,6 +18,7 @@ import {
   USER_SIGNIN_REQUEST,
   USER_SIGNIN_SUCCESS,
   USER_SIGNOUT,
+  USER_STATUS_REQUEST,
   USER_TOPSELLERS_LIST_FAIL,
   USER_TOPSELLERS_LIST_REQUEST,
   USER_TOPSELLERS_LIST_SUCCESS,
@@ -86,6 +87,8 @@ export const userUpdateProfileReducer = (state = {}, action) => {
       return state;
   }
 };
+
+
 export const userUpdateReducer = (state = {}, action) => {
   switch (action.type) {
     case USER_UPDATE_REQUEST:
@@ -100,6 +103,9 @@ export const userUpdateReducer = (state = {}, action) => {
       return state;
   }
 };
+
+
+
 export const userListReducer = (state = { loading: true }, action) => {
   switch (action.type) {
     case USER_LIST_REQUEST:
@@ -147,3 +153,22 @@ export const userAddressMapReducer = (state = {}, action) => {
       return state;
   }
 };
+
+
+const initialState = {
+  todayAttendance: null,
+  error: null,
+};
+
+const attendanceReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case 'GET_TODAY_ATTENDANCE_SUCCESS':
+      return { ...state, todayAttendance: action.payload, error: null };
+    case 'GET_TODAY_ATTENDANCE_FAIL':
+      return { ...state, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export default attendanceReducer;

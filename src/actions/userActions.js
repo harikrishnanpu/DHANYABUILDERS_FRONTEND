@@ -24,6 +24,12 @@ import {
   USER_TOPSELLERS_LIST_REQUEST,
   USER_TOPSELLERS_LIST_SUCCESS,
   USER_TOPSELLERS_LIST_FAIL,
+  USER_CHECKIN_SUCCESS,
+  USER_CHECKIN_FAIL,
+  USER_CHECKIN_REQUEST,
+  USER_STATUS_REQUEST,
+  USER_STATUS_SUCCESS,
+  USER_STATUS_FAIL
 } from '../constants/userConstants';
 
 export const register = (name, email, password) => async (dispatch) => {
@@ -48,10 +54,15 @@ export const register = (name, email, password) => async (dispatch) => {
   }
 };
 
+
+
+
 export const signin = (email, password) => async (dispatch) => {
   dispatch({ type: USER_SIGNIN_REQUEST, payload: { email, password } });
+  
   try {
     const { data } = await Axios.post('/api/users/signin', { email, password });
+    // dispatch({ type: 'LOGIN', payload: data.attendance });
     dispatch({ type: USER_SIGNIN_SUCCESS, payload: data });
     localStorage.setItem('userInfo', JSON.stringify(data));
   } catch (error) {
@@ -65,13 +76,78 @@ export const signin = (email, password) => async (dispatch) => {
   }
 };
 
-export const signout = () => (dispatch) => {
-  localStorage.removeItem('userInfo');
-  localStorage.removeItem('cartItems');
-  localStorage.removeItem('shippingAddress');
-  dispatch({ type: USER_SIGNOUT });
-  document.location.href = '/signin';
+
+export const getTodayAttendance = (userId) => async (dispatch) => {
+  try {
+    const response = await Axios.get(`/api/users/attendance/today/${userId}`);
+
+    dispatch({
+      type: 'GET_TODAY_ATTENDANCE_SUCCESS',
+      payload: response.data, // Axios automatically parses JSON
+    });
+  } catch (error) {
+    dispatch({
+      type: 'GET_TODAY_ATTENDANCE_FAIL',
+      payload: error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message,
+    });
+  }
 };
+
+
+
+
+export const getUserStatus = (userId) => async (dispatch, getState) => {
+  dispatch({ type: USER_STATUS_REQUEST, payload: userId });
+  const {
+    userSignin: { userInfo },
+  } = getState();
+  try {
+    const { data } = await Axios.get(`/api/users/userstatus`, {
+      headers: { Authorization: `Bearer ${userInfo?.token}` },
+    });
+    dispatch({ type: USER_STATUS_SUCCESS, payload: data });
+  } catch (error) {
+    const message =
+      error.response && error.response.data.message
+        ? error.response.data.message
+        : error.message;
+    dispatch({ type: USER_STATUS_FAIL, payload: message });
+  }
+};
+
+
+
+
+
+export const signout = (userId) => async (dispatch) => {
+  try {
+    const response = await Axios.post(`/api/users/logout/${userId}`);
+
+  if (response.ok) {
+
+    localStorage.removeItem('userInfo');
+    localStorage.removeItem('cartItems');
+    localStorage.removeItem('shippingAddress');
+    dispatch({ type: USER_SIGNOUT });
+    document.location.href = '/signin';
+  } else {
+    localStorage.removeItem('userInfo');
+    localStorage.removeItem('cartItems');
+    localStorage.removeItem('shippingAddress');
+    dispatch({ type: USER_SIGNOUT });
+    document.location.href = '/signin';
+    console.error('Logout failed');
+  }
+
+}catch(err){
+  console.log(err)
+}
+
+};
+
+
 export const detailsUser = (userId) => async (dispatch, getState) => {
   dispatch({ type: USER_DETAILS_REQUEST, payload: userId });
   const {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
 import { signout } from './actions/userActions';
@@ -32,8 +32,9 @@ import DashboardScreen from './screens/DashboardScreen';
 import SupportScreen from './screens/SupportScreen';
 import ChatBox from './components/ChatBox';
 import axios from 'axios';
+import AttendenceScreen from './screens/AttendenceScreen';
 
-axios.defaults.baseURL = 'https://dhanyabuilders-backend.onrender.com/';
+axios.defaults.baseURL = 'http://localhost:4000/';
 
 function App() {
   const cart = useSelector((state) => state.cart);
@@ -43,7 +44,7 @@ function App() {
   const { userInfo } = userSignin;
   const dispatch = useDispatch();
   const signoutHandler = () => {
-    dispatch(signout());
+    dispatch(signout(userInfo._id));
   };
 
   const productCategoryList = useSelector((state) => state.productCategoryList);
@@ -55,105 +56,85 @@ function App() {
   useEffect(() => {
     dispatch(listProductCategories());
   }, [dispatch]);
+
+  const navbarMenu = useRef(null);
+  const burgerMenu = useRef(null);
+
+const sidebarOpen = ()=>{
+  if(navbarMenu.current.classList.contains('is-active')){
+    sidebarClose()
+  }else{
+  navbarMenu.current.classList.add('is-active');
+  burgerMenu.current.classList.add('is-active');
+  }
+}
+
+const menuLink = useRef(null);
+
+const sidebarClose = ()=>{
+  navbarMenu.current.classList.remove('is-active');
+  burgerMenu.current.classList.remove('is-active');
+}
+
   return (
     <BrowserRouter>
       <div className="grid-container">
-        <header className="row">
-          <div>
-            <button
-              type="button"
-              className="open-sidebar"
-              onClick={() => setSidebarIsOpen(true)}
-            >
-              <i className="fa fa-bars"></i>
-            </button>
-            <Link className="brand" to="/">
-              amazona
-            </Link>
-          </div>
-          <div>
+
+<header className="header" id="header">
+   <nav className="navbar container">
+      <a href="/" className="brand">Dhanya Builders</a>
+      <div className="search">
+         <form className="search-form">
             <SearchBox />
-          </div>
-          <div>
-            <Link to="/cart">
-              Cart
-              {cartItems.length > 0 && (
-                <span className="badge">{cartItems.length}</span>
-              )}
-            </Link>
-            {userInfo ? (
-              <div className="dropdown">
-                <Link to="#">
-                  {userInfo.name} <i className="fa fa-caret-down"></i>{' '}
-                </Link>
-                <ul className="dropdown-content">
-                  <li>
-                    <Link to="/profile">User Profile</Link>
-                  </li>
-                  <li>
-                    <Link to="/orderhistory">Order History</Link>
-                  </li>
-                  <li>
-                    <Link to="#signout" onClick={signoutHandler}>
-                      Sign Out
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-            ) : (
-              <Link to="/signin">Sign In</Link>
-            )}
-            {userInfo && userInfo.isSeller && (
-              <div className="dropdown">
-                <Link to="#admin">
-                  Seller <i className="fa fa-caret-down"></i>
-                </Link>
-                <ul className="dropdown-content">
-                  <li>
-                    <Link to="/productlist/seller">Products</Link>
-                  </li>
-                  <li>
-                    <Link to="/orderlist/seller">Orders</Link>
-                  </li>
-                </ul>
-              </div>
-            )}
-            {userInfo && userInfo.isAdmin && (
-              <div className="dropdown">
-                <Link to="#admin">
-                  Admin <i className="fa fa-caret-down"></i>
-                </Link>
-                <ul className="dropdown-content">
-                  <li>
-                    <Link to="/dashboard">Dashboard</Link>
-                  </li>
-                  <li>
-                    <Link to="/productlist">Products</Link>
-                  </li>
-                  <li>
-                    <Link to="/orderlist">Orders</Link>
-                  </li>
-                  <li>
-                    <Link to="/userlist">Users</Link>
-                  </li>
-                  <li>
-                    <Link to="/support">Support</Link>
-                  </li>
-                </ul>
-              </div>
-            )}
-          </div>
-        </header>
-        <aside className={sidebarIsOpen ? 'open' : ''}>
+            <button type="submit" className="search-submit" disabled><i className="bx bx-search"></i></button>
+         </form>
+      </div>
+      <div ref={navbarMenu} className="menu" id="menu">
+        <ul className="menu-inner">
+          {userInfo && 
+            <li className="menu-item"><a href="/profile" onClick={sidebarClose} ref={menuLink} className="menu-link">Hi, {userInfo.name}</a></li>
+          }
+      {userInfo && userInfo.isAdmin && (
+        <li className="menu-item"><a href="/dashboard" onClick={sidebarClose} ref={menuLink} className="menu-link">Admin</a></li>
+       )}
+      {userInfo && userInfo.isSeller && (
+
+         <li className="menu-item"><a href="/productlist/seller" onClick={sidebarClose} ref={menuLink} className="menu-link">Member</a></li>
+
+        ) }
+         { userInfo ? (
+<>           
+           {/* <li className="menu-item"><a href="/orderhistory" onClick={sidebarClose}  ref={menuLink} className="menu-link">Order History</a></li> */}
+            <li className="menu-item"><a href="/cart" onClick={sidebarClose}  ref={menuLink} className="menu-link">Cart               {cartItems.length > 0 && (
+              <span className="badge">{cartItems.length}</span>
+            )} </a></li>
+            <li className="menu-item"><a onClick={signoutHandler}  ref={menuLink} className="menu-link">SignOut</a></li>
+            </>
+  ) : (
+         <li className="menu-item"><a href="/signin" onClick={sidebarClose}  ref={menuLink} className="menu-link">SignIn</a></li>
+
+         )
+        }
+        </ul>
+      </div>
+      <div ref={burgerMenu} onClick={sidebarOpen} className="burger" id="burger">
+         <span className="burger-line"></span>
+         <span className="burger-line"></span>
+         <span className="burger-line"></span>
+      </div>
+   </nav>
+</header>
+
+        {/* <aside className={sidebarIsOpen ? 'open' : ''}>
           <ul className="categories">
             <li>
               <strong>Categories</strong>
               <button
-                onClick={() => setSidebarIsOpen(false)}
+                onClick={sidebarClose}
                 className="close-sidebar"
                 type="button"
               >
-                <i className="fa fa-close"></i>
+                <i onClick={sidebarClose} className="fa fa-close"></i>
               </button>
             </li>
             {loadingCategories ? (
@@ -173,8 +154,8 @@ function App() {
               ))
             )}
           </ul>
-        </aside>
-        <main>
+        </aside> */}
+        <main style={{overflow:'scroll'}}>
           <Routes>
             <Route path="/seller/:id" element={<SellerScreen />}></Route>
             <Route path="/cart" element={<CartScreen />}></Route>
@@ -186,7 +167,7 @@ function App() {
             ></Route>
             <Route
               path="/product/:id/edit"
-              element={ProductEditScreen}
+              element={<ProductEditScreen />}
               exact
             ></Route>
             <Route path="/signin" element={<SigninScreen />}></Route>
@@ -308,6 +289,15 @@ function App() {
               element={
                 <SellerRoute>
                   <OrderListScreen />
+                </SellerRoute>
+              }
+            />
+
+            <Route
+              path="/attendence"
+              element={
+                <SellerRoute>
+                  <AttendenceScreen />
                 </SellerRoute>
               }
             />

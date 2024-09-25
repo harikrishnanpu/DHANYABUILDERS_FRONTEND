@@ -71,10 +71,13 @@ export default function ProductListScreen(props) {
   return (
     <div>
       <div className="row">
-        <h1>Products</h1>
-        <button type="button" className="primary" onClick={createHandler}>
+        <h1>My Projects</h1>
+        <div className="p-2 w-full mb-8">
+        <button type="button"           className="flex mr-auto text-white bg-blue-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg"
+ onClick={createHandler}>
           Create Product
         </button>
+   </div>
       </div>
 
       {loadingDelete && <LoadingBox></LoadingBox>}

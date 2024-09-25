@@ -5,14 +5,30 @@ import Product from '../components/Product';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import { useDispatch, useSelector } from 'react-redux';
-import { listProducts } from '../actions/productActions';
+import { createProduct, listProducts } from '../actions/productActions';
 import { listTopSellers } from '../actions/userActions';
-import { Link } from 'react-router-dom';
+import { Link, useParams, useNavigate, useLocation } from 'react-router-dom';
+import {
+  PRODUCT_CREATE_RESET,
+} from '../constants/productConstants';
 
 export default function HomeScreen() {
+  const navigate = useNavigate()
   const dispatch = useDispatch();
   const productList = useSelector((state) => state.productList);
   const { loading, error, products } = productList;
+  
+  const userSignin = useSelector((state) => state.userSignin);
+  const { userInfo } = userSignin;
+
+
+  const productCreate = useSelector((state) => state.productCreate);
+  const {
+    loading: loadingCreate,
+    error: errorCreate,
+    success: successCreate,
+    product: createdProduct,
+  } = productCreate;
 
   const userTopSellersList = useSelector((state) => state.userTopSellersList);
   const {
@@ -22,43 +38,37 @@ export default function HomeScreen() {
   } = userTopSellersList;
 
   useEffect(() => {
+    if (successCreate) {
+      dispatch({ type: PRODUCT_CREATE_RESET });
+      navigate(`/product/${createdProduct._id}/edit`);
+    }
     dispatch(listProducts({}));
     dispatch(listTopSellers());
-  }, [dispatch]);
+  }, [dispatch,successCreate,navigate]);
+  
+  const createHandler = () => {
+    dispatch(createProduct());
+  };
+  
   return (
-    <div>
-      <h2>Top Sellers</h2>
-      {loadingSellers ? (
+    <div style={{display:'grid',alignItems:'center',justifyContent:'center'}}>
+      <h2 style={{margin: '20px auto'}}>Members Panel</h2>
+      {loadingSellers || loadingCreate ? (
         <LoadingBox></LoadingBox>
       ) : errorSellers ? (
         <MessageBox variant="danger">{errorSellers}</MessageBox>
       ) : (
         <>
           {sellers.length === 0 && <MessageBox>No Seller Found</MessageBox>}
-          <Carousel showArrows autoPlay showThumbs={false}>
-            {sellers.map((seller) => (
-              <div key={seller._id}>
-                <Link to={`/seller/${seller._id}`}>
-                  <img src={seller.seller.logo} alt={seller.seller.name} />
-                  <p className="legend">{seller.seller.name}</p>
-                </Link>
-              </div>
-            ))}
-          </Carousel>
-        </>
-      )}
-      <h2>Featured Products</h2>
-      {loading ? (
-        <LoadingBox></LoadingBox>
-      ) : error ? (
-        <MessageBox variant="danger">{error}</MessageBox>
-      ) : (
-        <>
-          {products.length === 0 && <MessageBox>No Product Found</MessageBox>}
-          <div className="row center">
-            {products.map((product) => (
-              <Product key={product._id} product={product}></Product>
-            ))}
+          <div style={{display:'flex',alignItems:'center',justifyContent:'center'}}>
+            <div style={{textAlign:'center'}}>
+          <a onClick={createHandler} style={{padding:'12px',backgroundColor:'orange',fontWeight:'bold',margin:'10px',color:'black'}} className='btn'><i className='fa fa-plus'></i> Add Project</a>
+          <a href='/productlist/seller' style={{padding:'12px',backgroundColor:'orange',fontWeight:'bold',margin:'10px',color:'black'}} className='btn'>My Projects</a>
+          <a href='/support' style={{padding:'12px',backgroundColor:'orange',fontWeight:'bold',margin:'10px',color:'black'}} className='btn'><i className='fa fa-comment'></i>  Inbox</a>
+          <a href='/attendence' style={{padding:'12px',backgroundColor:'orange',fontWeight:'bold',margin:'10px',color:'black'}} className='btn'>Attendence</a>
+          <a href='/workers' style={{padding:'12px',backgroundColor:'orange',fontWeight:'bold',margin:'10px',color:'black'}} className='btn'>Workers</a>
+          {userInfo?.isAdmin && <a href='/userlist' style={{padding:'12px',backgroundColor:'orange',fontWeight:'bold',margin:'10px',color:'black'}} className='btn'>All Users</a>}
+            </div>
           </div>
         </>
       )}

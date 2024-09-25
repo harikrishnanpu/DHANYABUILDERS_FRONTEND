@@ -8,19 +8,11 @@ export default function SearchBox() {
     e.preventDefault();
     navigate(`/search/name/${name}`);
   };
+ 
   return (
-    <form className="search" onSubmit={submitHandler}>
-      <div className="row">
-        <input
-          type="text"
-          name="q"
-          id="q"
-          onChange={(e) => setName(e.target.value)}
-        ></input>
-        <button className="primary" type="submit">
-          <i className="fa fa-search"></i>
-        </button>
-      </div>
-    </form>
+    <>
+        <i onClick={submitHandler} style={{fontSize: 20,color:'gray'}} className="fa fa-search"></i>
+        <input type="text" id='q' name="q" className="search-input" placeholder="Search Projects" onChange={(e) => setName(e.target.value)}/>
+    </>
   );
 }
