@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import { Carousel } from 'react-responsive-carousel';
-import Product from '../components/Product';
+// import { Carousel } from 'react-responsive-carousel';
+// import Product from '../components/Product';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 import { useDispatch, useSelector } from 'react-redux';
 import { createProduct, listProducts } from '../actions/productActions';
 import { listTopSellers } from '../actions/userActions';
-import { Link, useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   PRODUCT_CREATE_RESET,
 } from '../constants/productConstants';
@@ -15,8 +15,8 @@ import {
 export default function HomeScreen() {
   const navigate = useNavigate()
   const dispatch = useDispatch();
-  const productList = useSelector((state) => state.productList);
-  const { loading, error, products } = productList;
+  // const productList = useSelector((state) => state.productList);
+  // const { loading, error, products } = productList;
   
   const userSignin = useSelector((state) => state.userSignin);
   const { userInfo } = userSignin;
@@ -25,7 +25,7 @@ export default function HomeScreen() {
   const productCreate = useSelector((state) => state.productCreate);
   const {
     loading: loadingCreate,
-    error: errorCreate,
+    // error: errorCreate,
     success: successCreate,
     product: createdProduct,
   } = productCreate;
@@ -44,7 +44,7 @@ export default function HomeScreen() {
     }
     dispatch(listProducts({}));
     dispatch(listTopSellers());
-  }, [dispatch,successCreate,navigate]);
+  }, [dispatch,successCreate,navigate,createdProduct]);
   
   const createHandler = () => {
     dispatch(createProduct());
@@ -62,7 +62,7 @@ export default function HomeScreen() {
           {sellers.length === 0 && <MessageBox>No Seller Found</MessageBox>}
           <div style={{display:'flex',alignItems:'center',justifyContent:'center'}}>
             <div style={{textAlign:'center'}}>
-          <a onClick={createHandler} style={{padding:'12px',backgroundColor:'orange',fontWeight:'bold',margin:'10px',color:'black'}} className='btn'><i className='fa fa-plus'></i> Add Project</a>
+          <button onClick={createHandler} style={{padding:'12px',backgroundColor:'orange',fontWeight:'bold',margin:'10px',color:'black'}} className='btn'><i className='fa fa-plus'></i> Add Project</button>
           <a href='/productlist/seller' style={{padding:'12px',backgroundColor:'orange',fontWeight:'bold',margin:'10px',color:'black'}} className='btn'>My Projects</a>
           <a href='/support' style={{padding:'12px',backgroundColor:'orange',fontWeight:'bold',margin:'10px',color:'black'}} className='btn'><i className='fa fa-comment'></i>  Inbox</a>
           <a href='/attendence' style={{padding:'12px',backgroundColor:'orange',fontWeight:'bold',margin:'10px',color:'black'}} className='btn'>Attendence</a>

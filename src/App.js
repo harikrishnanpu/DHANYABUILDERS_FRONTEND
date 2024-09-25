@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { signout } from './actions/userActions';
 import AdminRoute from './components/AdminRoute';
 import PrivateRoute from './components/PrivateRoute';
@@ -25,8 +25,8 @@ import SellerScreen from './screens/SellerScreen';
 import SearchBox from './components/SearchBox';
 import SearchScreen from './screens/SearchScreen';
 import { listProductCategories } from './actions/productActions';
-import LoadingBox from './components/LoadingBox';
-import MessageBox from './components/MessageBox';
+// import LoadingBox from './components/LoadingBox';
+// import MessageBox from './components/MessageBox';
 import MapScreen from './screens/MapScreen';
 import DashboardScreen from './screens/DashboardScreen';
 import SupportScreen from './screens/SupportScreen';
@@ -38,7 +38,6 @@ axios.defaults.baseURL = 'https://dhanyabuilders-backend.onrender.com/';
 
 function App() {
   const cart = useSelector((state) => state.cart);
-  const [sidebarIsOpen, setSidebarIsOpen] = useState(false);
   const { cartItems } = cart;
   const userSignin = useSelector((state) => state.userSignin);
   const { userInfo } = userSignin;
@@ -47,12 +46,12 @@ function App() {
     dispatch(signout(userInfo._id));
   };
 
-  const productCategoryList = useSelector((state) => state.productCategoryList);
-  const {
-    loading: loadingCategories,
-    error: errorCategories,
-    categories,
-  } = productCategoryList;
+  // const productCategoryList = useSelector((state) => state.productCategoryList);
+  // const {
+  //   loading: loadingCategories,
+  //   error: errorCategories,
+  //   categories,
+  // } = productCategoryList;
   useEffect(() => {
     dispatch(listProductCategories());
   }, [dispatch]);
@@ -108,7 +107,7 @@ const sidebarClose = ()=>{
             <li className="menu-item"><a href="/cart" onClick={sidebarClose}  ref={menuLink} className="menu-link">Cart               {cartItems.length > 0 && (
               <span className="badge">{cartItems.length}</span>
             )} </a></li>
-            <li className="menu-item"><a onClick={signoutHandler}  ref={menuLink} className="menu-link">SignOut</a></li>
+            <li className="menu-item"><button onClick={signoutHandler} ref={menuLink} className="menu-link">SignOut</button></li>
             </>
   ) : (
          <li className="menu-item"><a href="/signin" onClick={sidebarClose}  ref={menuLink} className="menu-link">SignIn</a></li>
@@ -125,36 +124,6 @@ const sidebarClose = ()=>{
    </nav>
 </header>
 
-        {/* <aside className={sidebarIsOpen ? 'open' : ''}>
-          <ul className="categories">
-            <li>
-              <strong>Categories</strong>
-              <button
-                onClick={sidebarClose}
-                className="close-sidebar"
-                type="button"
-              >
-                <i onClick={sidebarClose} className="fa fa-close"></i>
-              </button>
-            </li>
-            {loadingCategories ? (
-              <LoadingBox></LoadingBox>
-            ) : errorCategories ? (
-              <MessageBox variant="danger">{errorCategories}</MessageBox>
-            ) : (
-              categories.map((c) => (
-                <li key={c}>
-                  <Link
-                    to={`/search/category/${c}`}
-                    onClick={() => setSidebarIsOpen(false)}
-                  >
-                    {c}
-                  </Link>
-                </li>
-              ))
-            )}
-          </ul>
-        </aside> */}
         <main style={{overflow:'scroll'}}>
           <Routes>
             <Route path="/seller/:id" element={<SellerScreen />}></Route>
