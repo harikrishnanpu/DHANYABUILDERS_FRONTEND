@@ -34,7 +34,7 @@ import ChatBox from './components/ChatBox';
 import axios from 'axios';
 import AttendenceScreen from './screens/AttendenceScreen';
 
-axios.defaults.baseURL = 'http://localhost:4000/';
+axios.defaults.baseURL = 'https://dhanyabuilders-backend.onrender.com/';
 
 function App() {
   const cart = useSelector((state) => state.cart);
