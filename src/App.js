@@ -34,7 +34,7 @@ import AttendenceScreen from './screens/AttendenceScreen';
 import Facerecognition from './screens/Facerecognition';
 import Navbar from './components/Navbar';
 
-axios.defaults.baseURL = 'http://localhost:4000/'; // https://dhanyabuilders-backend.onrender.com/
+axios.defaults.baseURL = 'https://dhanyabuilders-backend.onrender.com/'; // https://dhanyabuilders-backend.onrender.com/
 
 function App() {
   const userSignin = useSelector((state) => state.userSignin);
