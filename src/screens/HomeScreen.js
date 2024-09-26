@@ -16,8 +16,6 @@ import axios from 'axios';
 export default function HomeScreen() {
   const navigate = useNavigate()
   const dispatch = useDispatch();
-  // const productList = useSelector((state) => state.productList);
-  // const { loading, error, products } = productList;
 
   const userSignin = useSelector((state) => state.userSignin);
   const { userInfo } = userSignin;
@@ -28,10 +26,10 @@ export default function HomeScreen() {
       navigate('/')
     }
 
+
     if(!userInfo){
       navigate('/signin')
-    }
-
+    }else{
     try {
       const FoundFaceData = axios.get(`/api/users/get-face-data/${userInfo._id}`)
     
@@ -46,6 +44,7 @@ export default function HomeScreen() {
       }catch(error){
          navigate('/face-id')
       }
+    }
 
   },[userInfo,navigate])
   
@@ -85,7 +84,7 @@ export default function HomeScreen() {
   return (
     <div style={{display:'grid',alignItems:'center',justifyContent:'center',textAlign:'center'}}>
       <h2 className='mx-auto text-center font-bold text-2xl text-red-600 mt-5'>Members Panel</h2>
-      <h1 className='sm:mx-auto text-lg font-bold mb-10 mt-2'>Hi, {userInfo.name}</h1>
+      <h1 className='sm:mx-auto text-lg font-bold mb-10 mt-2'>Hi, {userInfo?.name}</h1>
       {loadingSellers || loadingCreate ? (
         <LoadingBox></LoadingBox>
       ) : errorSellers ? (
