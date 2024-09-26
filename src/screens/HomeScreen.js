@@ -42,10 +42,12 @@ export default function HomeScreen() {
         }else{
           console.log('HI WELCOME')
         }
+      }else{
+        navigate('/face-id?ref=new')
       }
     
       }catch(error){
-        //  navigate('/face-id?ref=error')
+         navigate('/face-id?ref=error')
       }
 
     }
