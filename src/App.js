@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { signout } from './actions/userActions';
@@ -33,6 +33,7 @@ import SupportScreen from './screens/SupportScreen';
 import ChatBox from './components/ChatBox';
 import axios from 'axios';
 import AttendenceScreen from './screens/AttendenceScreen';
+import Facerecognition from './screens/Facerecognition';
 
 axios.defaults.baseURL = 'http://localhost:4000/'; // 
 
@@ -75,11 +76,44 @@ const sidebarClose = ()=>{
   burgerMenu.current.classList.remove('is-active');
 }
 
+
+const [currentPath, setCurrentPath] = useState(window.location.pathname);
+
+useEffect(() => {
+  // Override history.pushState and history.replaceState
+  const updatePath = () => {
+    setCurrentPath(window.location.pathname);
+  };
+
+  const originalPushState = window.history.pushState;
+  const originalReplaceState = window.history.replaceState;
+
+  window.history.pushState = function (...args) {
+    originalPushState.apply(window.history, args);
+    updatePath();
+  };
+
+  window.history.replaceState = function (...args) {
+    originalReplaceState.apply(window.history, args);
+    updatePath();
+  };
+
+  // Listen for popstate event (triggered by browser navigation)
+  window.addEventListener('popstate', updatePath);
+
+  // Cleanup on component unmount
+  return () => {
+    window.history.pushState = originalPushState;
+    window.history.replaceState = originalReplaceState;
+    window.removeEventListener('popstate', updatePath);
+  };
+}, []);
+
   return (
     <BrowserRouter>
-      <div className="">
+      <div>
 
-{ window.location.pathname === '/signin' ? " " : ( <header className="header mb-8" id="header">
+{ currentPath === '/signin' ? " " : currentPath === '/register' ? " "  : ( <header className="header mb-8" id="header">
    <nav className="navbar">
       <a href="/" className="brand">Dhanya Builders</a>
       <div className="search">
@@ -104,13 +138,16 @@ const sidebarClose = ()=>{
          { userInfo ? (
 <>           
            {/* <li className="menu-item"><a href="/orderhistory" onClick={sidebarClose}  ref={menuLink} className="menu-link">Order History</a></li> */}
-            <li className="menu-item"><a href="/cart" onClick={sidebarClose}  ref={menuLink} className="menu-link">Cart               {cartItems.length > 0 && (
+            <li className="menu-item"><a href="/cart" onClick={sidebarClose}  ref={menuLink} className="menu-link">Pending               {cartItems.length > 0 && (
               <span className="badge">{cartItems.length}</span>
             )} </a></li>
             <li className="menu-item"><button onClick={signoutHandler} ref={menuLink} className="menu-link">SignOut</button></li>
             </>
   ) : (
-         <li className="menu-item"><a href="/signin" onClick={sidebarClose}  ref={menuLink} className="menu-link">SignIn</a></li>
+    <>
+         <li className="menu-item"><a href="/signin" onClick={sidebarClose}  ref={menuLink} className="menu-link"><i className="fa fa-sign-in" aria-hidden="true"></i> Login</a></li>
+        <li className="menu-item"><a href="#help" onClick={sidebarClose}  ref={menuLink} className="menu-link"><i className="fa fa-info-circle text-sm" aria-hidden="true"></i> Help Center</a></li>
+    </>
 
          )
         }
@@ -122,7 +159,7 @@ const sidebarClose = ()=>{
          <span className="burger-line"></span>
       </div>
    </nav>
-</header> )}
+</header>) }
 
         <main>
 
@@ -141,6 +178,7 @@ const sidebarClose = ()=>{
               exact
             ></Route>
             <Route path="/signin" element={<SigninScreen />}></Route>
+            <Route path="/face-id" element={<Facerecognition />}></Route>
             <Route path="/register" element={<RegisterScreen />}></Route>
             <Route path="/shipping" element={<ShippingAddressScreen />}></Route>
             <Route path="/payment" element={<PaymentMethodScreen />}></Route>
@@ -180,6 +218,7 @@ const sidebarClose = ()=>{
                 </PrivateRoute>
               }
             />
+
             <Route
               path="/map"
               element={

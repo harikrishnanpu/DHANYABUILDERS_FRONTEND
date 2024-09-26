@@ -11,15 +11,44 @@ import { useNavigate } from 'react-router-dom';
 import {
   PRODUCT_CREATE_RESET,
 } from '../constants/productConstants';
+import axios from 'axios';
 
 export default function HomeScreen() {
   const navigate = useNavigate()
   const dispatch = useDispatch();
   // const productList = useSelector((state) => state.productList);
   // const { loading, error, products } = productList;
-  
+
   const userSignin = useSelector((state) => state.userSignin);
   const { userInfo } = userSignin;
+
+  useEffect(()=>{
+
+    if(localStorage.getItem('faceId')){
+      navigate('/')
+    }
+
+    if(!userInfo){
+      navigate('/signin')
+    }
+
+    try {
+      const FoundFaceData = axios.get(`/api/users/get-face-data/${userInfo._id}`)
+    
+      if(FoundFaceData.data.faceDescriptor.length !==0){
+        if(!localStorage.getItem('faceId')){
+          navigate('/face-id?ref=login')
+        }else{
+          console.log('HI WELCOME')
+        }
+      }
+    
+      }catch(error){
+         navigate('/face-id')
+      }
+
+  },[userInfo,navigate])
+  
 
 
   const productCreate = useSelector((state) => state.productCreate);
@@ -37,6 +66,9 @@ export default function HomeScreen() {
     users: sellers,
   } = userTopSellersList;
 
+
+
+
   useEffect(() => {
     if (successCreate) {
       dispatch({ type: PRODUCT_CREATE_RESET });
@@ -51,8 +83,9 @@ export default function HomeScreen() {
   };
   
   return (
-    <div style={{display:'grid',alignItems:'center',justifyContent:'center'}}>
-      <h2 style={{margin: '20px auto'}}>Members Panel</h2>
+    <div style={{display:'grid',alignItems:'center',justifyContent:'center',textAlign:'center'}}>
+      <h2 className='mx-auto text-center font-bold text-2xl text-red-600 mt-5'>Members Panel</h2>
+      <h1 className='sm:mx-auto text-lg font-bold mb-10 mt-2'>Hi, {userInfo.name}</h1>
       {loadingSellers || loadingCreate ? (
         <LoadingBox></LoadingBox>
       ) : errorSellers ? (
@@ -62,16 +95,18 @@ export default function HomeScreen() {
           {sellers.length === 0 && <MessageBox>No Seller Found</MessageBox>}
           <div style={{display:'flex',alignItems:'center',justifyContent:'center'}}>
             <div style={{textAlign:'center'}}>
-          <button onClick={createHandler} style={{padding:'12px',backgroundColor:'orange',fontWeight:'bold',margin:'10px',color:'black'}} className='btn'><i className='fa fa-plus'></i> Add Project</button>
-          <a href='/productlist/seller' style={{padding:'12px',backgroundColor:'orange',fontWeight:'bold',margin:'10px',color:'black'}} className='btn'>My Projects</a>
-          <a href='/support' style={{padding:'12px',backgroundColor:'orange',fontWeight:'bold',margin:'10px',color:'black'}} className='btn'><i className='fa fa-comment'></i>  Inbox</a>
-          <a href='/attendence' style={{padding:'12px',backgroundColor:'orange',fontWeight:'bold',margin:'10px',color:'black'}} className='btn'>Attendence</a>
-          <a href='/workers' style={{padding:'12px',backgroundColor:'orange',fontWeight:'bold',margin:'10px',color:'black'}} className='btn'>Workers</a>
-          {userInfo?.isAdmin && <a href='/userlist' style={{padding:'12px',backgroundColor:'orange',fontWeight:'bold',margin:'10px',color:'black'}} className='btn'>All Users</a>}
+          <button onClick={createHandler} style={{padding:'12px',backgroundColor:'hsl(349, 100%, 60%)',fontWeight:'bold',margin:'10px',color:'white'}} className='btn'><i className='fa fa-plus'></i> Add Products</button>
+          <a href='/productlist/seller' style={{padding:'12px',backgroundColor:'hsl(349, 100%, 60%)',fontWeight:'bold',margin:'10px',color:'white'}} className='btn'>My Products</a>
+          <a href='/support' style={{padding:'12px',backgroundColor:'hsl(349, 100%, 60%)',fontWeight:'bold',margin:'10px',color:'white'}} className='btn'><i className='fa fa-comment'></i>  Inbox</a>
+          <a href='/attendence' style={{padding:'12px',backgroundColor:'hsl(349, 100%, 60%)',fontWeight:'bold',margin:'10px',color:'white'}} className='btn'>Attendence</a>
+          <a href='/workers' style={{padding:'12px',backgroundColor:'hsl(349, 100%, 60%)',fontWeight:'bold',margin:'10px',color:'white'}} className='btn'>Workers</a>
+          {userInfo?.isAdmin && <a href='/userlist' style={{padding:'12px',backgroundColor:'hsl(349, 100%, 60%)',fontWeight:'bold',margin:'10px',color:'white'}} className='btn'>All Users</a>}
             </div>
           </div>
         </>
       )}
+
+
     </div>
   );
 }

@@ -130,12 +130,16 @@ export const signout = (userId) => async (dispatch) => {
     localStorage.removeItem('userInfo');
     localStorage.removeItem('cartItems');
     localStorage.removeItem('shippingAddress');
+    localStorage.removeItem('faceId');
+    localStorage.removeItem('modalShown');
     dispatch({ type: USER_SIGNOUT });
     document.location.href = '/signin';
   } else {
     localStorage.removeItem('userInfo');
     localStorage.removeItem('cartItems');
     localStorage.removeItem('shippingAddress');
+    localStorage.removeItem('faceId');
+    localStorage.removeItem('modalShown');
     dispatch({ type: USER_SIGNOUT });
     document.location.href = '/signin';
     console.error('Logout failed');
