@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { signout } from './actions/userActions';
 import AdminRoute from './components/AdminRoute';
 import PrivateRoute from './components/PrivateRoute';
 import CartScreen from './screens/CartScreen';
@@ -22,7 +21,6 @@ import UserListScreen from './screens/UserListScreen';
 import UserEditScreen from './screens/UserEditScreen';
 import SellerRoute from './components/SellerRoute';
 import SellerScreen from './screens/SellerScreen';
-import SearchBox from './components/SearchBox';
 import SearchScreen from './screens/SearchScreen';
 import { listProductCategories } from './actions/productActions';
 // import LoadingBox from './components/LoadingBox';
@@ -34,18 +32,14 @@ import ChatBox from './components/ChatBox';
 import axios from 'axios';
 import AttendenceScreen from './screens/AttendenceScreen';
 import Facerecognition from './screens/Facerecognition';
+import Navbar from './components/Navbar';
 
 axios.defaults.baseURL = 'https://dhanyabuilders-backend.onrender.com/'; // 
 
 function App() {
-  const cart = useSelector((state) => state.cart);
-  const { cartItems } = cart;
   const userSignin = useSelector((state) => state.userSignin);
   const { userInfo } = userSignin;
   const dispatch = useDispatch();
-  const signoutHandler = () => {
-    dispatch(signout(userInfo._id));
-  };
 
   // const productCategoryList = useSelector((state) => state.productCategoryList);
   // const {
@@ -57,29 +51,12 @@ function App() {
     dispatch(listProductCategories());
   }, [dispatch]);
 
-  const navbarMenu = useRef(null);
-  const burgerMenu = useRef(null);
-
-const sidebarOpen = ()=>{
-  if(navbarMenu.current.classList.contains('is-active')){
-    sidebarClose()
-  }else{
-  navbarMenu.current.classList.add('is-active');
-  burgerMenu.current.classList.add('is-active');
-  }
-}
-
-const menuLink = useRef(null);
-
-const sidebarClose = ()=>{
-  navbarMenu.current.classList.remove('is-active');
-  burgerMenu.current.classList.remove('is-active');
-}
-
-
-const [currentPath, setCurrentPath] = useState(window.location.pathname);
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
 
 useEffect(() => {
+
+  setCurrentPath(window.location.pathname)
+
   // Override history.pushState and history.replaceState
   const updatePath = () => {
     setCurrentPath(window.location.pathname);
@@ -113,57 +90,9 @@ useEffect(() => {
     <BrowserRouter>
       <div>
 
-{ currentPath === '/signin' ? " " : currentPath === '/register' ? " "  : ( <header className="header mb-8" id="header">
-   <nav className="navbar">
-      <a href="/" className="brand">Dhanya Builders</a>
-      <div className="search">
-         <form className="search-form">
-            <SearchBox />
-            <button type="submit" className="search-submit" disabled><i className="bx bx-search"></i></button>
-         </form>
-      </div>
-      <div ref={navbarMenu} className="menu" id="menu">
-        <ul className="menu-inner">
-          {userInfo && 
-            <li className="menu-item"><a href="/profile" onClick={sidebarClose} ref={menuLink} className="menu-link">Profile</a></li>
-          }
-      {userInfo && userInfo.isAdmin && (
-        <li className="menu-item"><a href="/dashboard" onClick={sidebarClose} ref={menuLink} className="menu-link">Admin</a></li>
-       )}
-      {userInfo && userInfo.isSeller && (
-
-         <li className="menu-item"><a href="/productlist/seller" onClick={sidebarClose} ref={menuLink} className="menu-link">Member</a></li>
-
-        ) }
-         { userInfo ? (
-<>           
-           {/* <li className="menu-item"><a href="/orderhistory" onClick={sidebarClose}  ref={menuLink} className="menu-link">Order History</a></li> */}
-            <li className="menu-item"><a href="/cart" onClick={sidebarClose}  ref={menuLink} className="menu-link">Pending               {cartItems.length > 0 && (
-              <span className="badge">{cartItems.length}</span>
-            )} </a></li>
-            <li className="menu-item"><button onClick={signoutHandler} ref={menuLink} className="menu-link">SignOut</button></li>
-            </>
-  ) : (
-    <>
-         <li className="menu-item"><a href="/signin" onClick={sidebarClose}  ref={menuLink} className="menu-link"><i className="fa fa-sign-in" aria-hidden="true"></i> Login</a></li>
-        <li className="menu-item"><a href="#help" onClick={sidebarClose}  ref={menuLink} className="menu-link"><i className="fa fa-info-circle text-sm" aria-hidden="true"></i> Help Center</a></li>
-    </>
-
-         )
-        }
-        </ul>
-      </div>
-      <div ref={burgerMenu} onClick={sidebarOpen} className="burger" id="burger">
-         <span className="burger-line"></span>
-         <span className="burger-line"></span>
-         <span className="burger-line"></span>
-      </div>
-   </nav>
-</header>) }
-
+      { currentPath !== '/signin' && currentPath !== '/register' && <Navbar />}
         <main>
-
-          <Routes>
+                            <Routes>
             <Route path="/seller/:id" element={<SellerScreen />}></Route>
             <Route path="/cart" element={<CartScreen />}></Route>
             <Route path="/cart/:id" element={<CartScreen />}></Route>

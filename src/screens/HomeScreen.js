@@ -42,7 +42,7 @@ export default function HomeScreen() {
       }
     
       }catch(error){
-         navigate('/face-id')
+         navigate('/face-id?ref=error')
       }
     }
 
