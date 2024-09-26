@@ -34,7 +34,7 @@ import AttendenceScreen from './screens/AttendenceScreen';
 import Facerecognition from './screens/Facerecognition';
 import Navbar from './components/Navbar';
 
-axios.defaults.baseURL = 'https://dhanyabuilders-backend.onrender.com/'; // 
+axios.defaults.baseURL = 'http://localhost:4000/'; // https://dhanyabuilders-backend.onrender.com/
 
 function App() {
   const userSignin = useSelector((state) => state.userSignin);
@@ -90,7 +90,7 @@ useEffect(() => {
     <BrowserRouter>
       <div>
 
-      { currentPath !== '/signin' && currentPath !== '/register' && <Navbar />}
+      { currentPath !== '/signin' && currentPath !== '/register' &&  currentPath !== '/face-id' && <Navbar />}
         <main>
                             <Routes>
             <Route path="/seller/:id" element={<SellerScreen />}></Route>

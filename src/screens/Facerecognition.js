@@ -20,6 +20,8 @@ const modalLoginOverlay = useRef(null);
 
 useEffect(()=>{
 
+  async function fetchData () {
+
   if(!userInfo){
     navigate('/signin')
   }
@@ -29,7 +31,7 @@ useEffect(()=>{
   }
 
   try {
-  const FoundFaceData = axios.get(`/api/users/get-face-data/${userInfo._id}`)
+  const FoundFaceData = await axios.get(`/api/users/get-face-data/${userInfo._id}`)
 
   if(FoundFaceData.data.faceDescriptor.length !==0){
         modalLoginOverlay.current.classList.add("visible")
@@ -39,6 +41,10 @@ useEffect(()=>{
   }catch(error){
       modalOverlay.current.classList.add("visible")
   }
+
+}
+
+fetchData();
 
 },[userInfo,navigate])
 

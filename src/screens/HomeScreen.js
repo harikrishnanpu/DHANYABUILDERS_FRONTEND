@@ -22,18 +22,21 @@ export default function HomeScreen() {
 
   useEffect(()=>{
 
+
+    async function fetchData () {
+
     if(localStorage.getItem('faceId')){
       navigate('/')
     }
 
-
     if(!userInfo){
       navigate('/signin')
-    }else{
+    }
+
     try {
-      const FoundFaceData = axios.get(`/api/users/get-face-data/${userInfo._id}`)
-    
-      if(FoundFaceData.data.faceDescriptor.length !==0){
+      const FoundFaceData = await axios.get(`/api/users/get-face-data/${userInfo?._id}`);
+      console.log(FoundFaceData)
+      if(FoundFaceData.data.faceDescriptor?.length !==0){
         if(!localStorage.getItem('faceId')){
           navigate('/face-id?ref=login')
         }else{
@@ -42,9 +45,12 @@ export default function HomeScreen() {
       }
     
       }catch(error){
-         navigate('/face-id?ref=error')
+        //  navigate('/face-id?ref=error')
       }
+
     }
+
+    fetchData()
 
   },[userInfo,navigate])
   
