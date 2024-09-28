@@ -34,6 +34,7 @@ import AttendenceScreen from './screens/AttendenceScreen';
 import Facerecognition from './screens/Facerecognition';
 import Navbar from './components/Navbar';
 import Chatscreen from './screens/Chatscreen';
+import MapComponent from './screens/liveTracking';
 
 axios.defaults.baseURL = 'http://localhost:4000/'; // https://dhanyabuilders-backend.onrender.com/
 
@@ -48,6 +49,7 @@ function App() {
   //   error: errorCategories,
   //   categories,
   // } = productCategoryList;
+  
   useEffect(() => {
     dispatch(listProductCategories());
   }, [dispatch]);
@@ -91,7 +93,7 @@ useEffect(() => {
     <BrowserRouter>
       <div>
 
-      { currentPath !== '/signin' && currentPath !== '/register' &&  currentPath !== '/face-id' && currentPath !== '/support' && currentPath !== '/chat' && <Navbar />}
+      { currentPath !== '/signin' && currentPath !== '/register' &&  currentPath !== '/face-id' && currentPath !== '/support' && currentPath !== '/chat' && currentPath !== '/live-tracking' && <Navbar />}
         <main>
                             <Routes>
             <Route path="/seller/:id" element={<SellerScreen />}></Route>
@@ -242,7 +244,9 @@ useEffect(() => {
             />
 
             <Route path="/chat" element={<Chatscreen />}></Route>
+            <Route path="/live-tracking" element={<MapComponent />}></Route>
             <Route path="/" element={<HomeScreen />} exact></Route>
+
           </Routes>
           {userInfo && !userInfo.isAdmin && currentPath !== '/chat' && <ChatBox userInfo={userInfo} />}
         </main>

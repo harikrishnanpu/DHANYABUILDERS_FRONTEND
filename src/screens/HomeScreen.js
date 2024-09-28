@@ -12,6 +12,7 @@ import {
   PRODUCT_CREATE_RESET,
 } from '../constants/productConstants';
 import axios from 'axios';
+import LiveTracker from '../components/LocationTracker';
 
 export default function HomeScreen() {
   const navigate = useNavigate()
@@ -59,6 +60,7 @@ export default function HomeScreen() {
 
 
   const productCreate = useSelector((state) => state.productCreate);
+
   const {
     loading: loadingCreate,
     // error: errorCreate,
@@ -91,6 +93,7 @@ export default function HomeScreen() {
   
   return (
     <div style={{display:'grid',alignItems:'center',justifyContent:'center',textAlign:'center'}}>
+      {userInfo && !userInfo.isAdmin && <LiveTracker />}
       <h2 className='mx-auto text-center font-bold text-2xl text-red-600 mt-5'>Members Panel</h2>
       <h1 className='sm:mx-auto text-lg font-bold mb-10 mt-2'>Hi, {userInfo?.name}</h1>
       {loadingSellers || loadingCreate ? (
@@ -104,10 +107,11 @@ export default function HomeScreen() {
             <div style={{textAlign:'center'}}>
           <button onClick={createHandler} style={{padding:'12px',backgroundColor:'hsl(349, 100%, 60%)',fontWeight:'bold',margin:'10px',color:'white'}} className='btn'><i className='fa fa-plus'></i> Add Products</button>
           <a href='/productlist/seller' style={{padding:'12px',backgroundColor:'hsl(349, 100%, 60%)',fontWeight:'bold',margin:'10px',color:'white'}} className='btn'>My Products</a>
-          <a href={userInfo.isAdmin ? '/support' : '/chat'} style={{padding:'12px',backgroundColor:'hsl(349, 100%, 60%)',fontWeight:'bold',margin:'10px',color:'white'}} className='btn'><i className='fa fa-comment'></i>  Inbox</a>
+          <a href={userInfo && userInfo?.isAdmin ? '/support' : '/chat'} style={{padding:'12px',backgroundColor:'hsl(349, 100%, 60%)',fontWeight:'bold',margin:'10px',color:'white'}} className='btn'><i className='fa fa-comment'></i>  Inbox</a>
           <a href='/attendence' style={{padding:'12px',backgroundColor:'hsl(349, 100%, 60%)',fontWeight:'bold',margin:'10px',color:'white'}} className='btn'>Attendence</a>
           <a href='/workers' style={{padding:'12px',backgroundColor:'hsl(349, 100%, 60%)',fontWeight:'bold',margin:'10px',color:'white'}} className='btn'>Workers</a>
-          {userInfo?.isAdmin && <a href='/userlist' style={{padding:'12px',backgroundColor:'hsl(349, 100%, 60%)',fontWeight:'bold',margin:'10px',color:'white'}} className='btn'>All Users</a>}
+          {userInfo && userInfo?.isAdmin && <a href='/userlist' style={{padding:'12px',backgroundColor:'hsl(349, 100%, 60%)',fontWeight:'bold',margin:'10px',color:'white'}} className='btn'>All Users</a>}
+          {userInfo && userInfo.isAdmin && <a href='/live-tracking' style={{padding:'12px',backgroundColor:'hsl(349, 100%, 60%)',fontWeight:'bold',margin:'10px',color:'white'}} className='btn'><i className='fa fa-map-marker' /> Track Users</a>}
             </div>
           </div>
         </>
