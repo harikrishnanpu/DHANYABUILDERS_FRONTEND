@@ -33,8 +33,9 @@ import axios from 'axios';
 import AttendenceScreen from './screens/AttendenceScreen';
 import Facerecognition from './screens/Facerecognition';
 import Navbar from './components/Navbar';
+import Chatscreen from './screens/Chatscreen';
 
-axios.defaults.baseURL = 'https://dhanyabuilders-backend.onrender.com/'; // https://dhanyabuilders-backend.onrender.com/
+axios.defaults.baseURL = 'http://localhost:4000/'; // https://dhanyabuilders-backend.onrender.com/
 
 function App() {
   const userSignin = useSelector((state) => state.userSignin);
@@ -90,7 +91,7 @@ useEffect(() => {
     <BrowserRouter>
       <div>
 
-      { currentPath !== '/signin' && currentPath !== '/register' &&  currentPath !== '/face-id' && <Navbar />}
+      { currentPath !== '/signin' && currentPath !== '/register' &&  currentPath !== '/face-id' && currentPath !== '/support' && currentPath !== '/chat' && <Navbar />}
         <main>
                             <Routes>
             <Route path="/seller/:id" element={<SellerScreen />}></Route>
@@ -240,9 +241,10 @@ useEffect(() => {
               }
             />
 
+            <Route path="/chat" element={<Chatscreen />}></Route>
             <Route path="/" element={<HomeScreen />} exact></Route>
           </Routes>
-          {userInfo && !userInfo.isAdmin && <ChatBox userInfo={userInfo} />}
+          {userInfo && !userInfo.isAdmin && currentPath !== '/chat' && <ChatBox userInfo={userInfo} />}
         </main>
         {/* <footer className="row center">
           {userInfo && !userInfo.isAdmin && <ChatBox userInfo={userInfo} />}

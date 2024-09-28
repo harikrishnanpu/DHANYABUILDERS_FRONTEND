@@ -104,7 +104,7 @@ export default function HomeScreen() {
             <div style={{textAlign:'center'}}>
           <button onClick={createHandler} style={{padding:'12px',backgroundColor:'hsl(349, 100%, 60%)',fontWeight:'bold',margin:'10px',color:'white'}} className='btn'><i className='fa fa-plus'></i> Add Products</button>
           <a href='/productlist/seller' style={{padding:'12px',backgroundColor:'hsl(349, 100%, 60%)',fontWeight:'bold',margin:'10px',color:'white'}} className='btn'>My Products</a>
-          <a href='/support' style={{padding:'12px',backgroundColor:'hsl(349, 100%, 60%)',fontWeight:'bold',margin:'10px',color:'white'}} className='btn'><i className='fa fa-comment'></i>  Inbox</a>
+          <a href={userInfo.isAdmin ? '/support' : '/chat'} style={{padding:'12px',backgroundColor:'hsl(349, 100%, 60%)',fontWeight:'bold',margin:'10px',color:'white'}} className='btn'><i className='fa fa-comment'></i>  Inbox</a>
           <a href='/attendence' style={{padding:'12px',backgroundColor:'hsl(349, 100%, 60%)',fontWeight:'bold',margin:'10px',color:'white'}} className='btn'>Attendence</a>
           <a href='/workers' style={{padding:'12px',backgroundColor:'hsl(349, 100%, 60%)',fontWeight:'bold',margin:'10px',color:'white'}} className='btn'>Workers</a>
           {userInfo?.isAdmin && <a href='/userlist' style={{padding:'12px',backgroundColor:'hsl(349, 100%, 60%)',fontWeight:'bold',margin:'10px',color:'white'}} className='btn'>All Users</a>}

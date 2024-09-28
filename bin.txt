@@ -146,3 +146,38 @@
             )}
           </ul>
         </aside> */}
+
+
+
+                      // <li
+              //   key={user._id}
+              //   className={user._id === selectedUser._id ? '  selected' : '  '}
+              // >
+              //   <button
+              //     className="block"
+              //     type="button"
+              //     onClick={() => selectUser(user)}
+              //   >
+              //     {user.name}
+              //   </button>
+              //   <span
+              //     className={
+              //       user.unread ? 'unread' : user.online ? 'online' : 'offline'
+              //     }
+              //   />
+              // </li>
+
+
+                            {/* 
+            <div className='mb-3 fixed bottom-0 mx-auto justify-center text-center'>
+              <form onSubmit={submitHandler} className="flex justify-between w-full">
+                <input
+                  value={messageBody}
+                  onChange={(e) => setMessageBody(e.target.value)}
+                  type="text"
+                  placeholder="type message"
+                  className="bg-gray-100 w-full bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" 
+            />
+                <button className='' type="submit">Send</button>
+              </form>
+            </div> */}
