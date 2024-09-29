@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import socketIOClient from 'socket.io-client';
 
-const ENDPOINT = 'http://localhost:4000/' //
+const ENDPOINT = 'https://dhanyabuilders-backend.onrender.com/' // https://dhanyabuilders-backend.onrender.com/
 
 export default function ChatBox(props) {
   const { userInfo } = props;
