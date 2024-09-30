@@ -7,104 +7,141 @@ import moment from 'moment'; // Import moment.js for date formatting
 const socket = io('https://dhanyabuilders-backend.onrender.com/'); // Replace with your server URL
 
 const useMapLocations = (setMapCenter, setZoom) => {
-    const [locations, setLocations] = useState({});
-    const [loading, setLoading] = useState(true);
+  const [locations, setLocations] = useState({});
+  const [loading, setLoading] = useState(true);
 
-    const loadStoredLocations = useCallback(() => {
-        const storedLocations = {};
-        Object.keys(localStorage).forEach((key) => {
-            if (key.startsWith('lastlocation')) {
-                try {
-                    const userId = key.replace('lastlocation', '');
-                    const storedData = JSON.parse(localStorage.getItem(key));
-                    if (storedData?.latitude && storedData?.longitude) {
-                        storedLocations[userId] = storedData;
-                    }
-                } catch (error) {
-                    console.error(`Error parsing localStorage item ${key}:`, error);
-                }
-            }
-        });
-        return storedLocations;
-    }, []);
-
-    const fetchInitialLocations = useCallback(async () => {
+  const loadStoredLocations = useCallback(() => {
+    const storedLocations = {};
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith("lastlocation")) {
         try {
-            const response = await axios.get('/api/users/location/users');
-            const initialLocations = response.data;
-
-            const updatedLocations = initialLocations.reduce((acc, loc) => {
-                acc[loc.userId] = {
-                    name: loc.name,
-                    longitude: loc.coordinates[0],
-                    latitude: loc.coordinates[1],
-                    icon: loc.iconUrl,
-                    path: [[loc.coordinates[1], loc.coordinates[0]]], // Initialize path with the first position
-                };
-                return acc;
-            }, {});
-
-            // Store locations in local storage
-            Object.entries(updatedLocations).forEach(([userId, loc]) => {
-                localStorage.setItem(`lastlocation${userId}`, JSON.stringify(loc));
-            });
-
-            setLocations(updatedLocations);
-            if (initialLocations.length > 0) {
-                const firstLoc = initialLocations[0];
-                setMapCenter({ lat: firstLoc.coordinates[1], lng: firstLoc.coordinates[0] });
-                setZoom(14);
-            }
-            setLoading(false);
+          const userId = key.replace("lastlocation", "");
+          const storedData = JSON.parse(localStorage.getItem(key));
+          if (storedData?.latitude && storedData?.longitude) {
+            storedLocations[userId] = storedData;
+          }
         } catch (error) {
-            console.error('Error fetching locations:', error);
-            setLoading(false);
+          console.error(`Error parsing localStorage item ${key}:`, error);
         }
-    }, [setMapCenter, setZoom]);
+      }
+    });
+    return storedLocations;
+  }, []);
 
-    const updateLocationAddress = (userId, address) => {
-        setLocations((prevLocations) => ({
-            ...prevLocations,
-            [userId]: {
-                ...prevLocations[userId],
-                address,
-            },
-        }));
-    };
+  const fetchInitialLocations = useCallback(async () => {
+    try {
+      const response = await axios.get("/api/users/location/users");
+      const initialLocations = response.data;
 
-    useEffect(() => {
-        fetchInitialLocations();
-        const storedLocations = loadStoredLocations();
-        setLocations((prevLocations) => ({ ...prevLocations, ...storedLocations }));
+      const updatedLocations = initialLocations.reduce((acc, loc) => {
+        const storedPath = localStorage.getItem(`path${loc.userId}`)
+          ? JSON.parse(localStorage.getItem(`path${loc.userId}`))
+          : [];
 
-        socket.on('location-updated', (newLocation) => {
-            setLocations((prevLocations) => {
-                const updatedLocations = {
-                    ...prevLocations,
-                    [newLocation.userId]: {
-                        ...prevLocations[newLocation.userId],
-                        longitude: newLocation.longitude,
-                        latitude: newLocation.latitude,
-                        name: newLocation.userName,
-                        icon: newLocation.iconUrl,
-                        path: [...prevLocations[newLocation.userId].path, [newLocation.latitude, newLocation.longitude]], // Update path
-                    },
-                };
-
-                localStorage.setItem(`lastlocation${newLocation.userId}`, JSON.stringify(updatedLocations[newLocation.userId]));
-                setMapCenter({ lat: newLocation.latitude, lng: newLocation.longitude });
-                setZoom(14);
-
-                return updatedLocations;
-            });
-        });
-
-        return () => {
-            socket.off('location-updated');
+        acc[loc.userId] = {
+          name: loc.name,
+          longitude: loc.coordinates[0],
+          latitude: loc.coordinates[1],
+          icon: loc.iconUrl,
+          lastUpdated: new Date(loc.updatedAt), // Last updated location time
+          path:
+            storedPath.length > 0
+              ? [...storedPath, [loc.coordinates[1], loc.coordinates[0]]]
+              : [[loc.coordinates[1], loc.coordinates[0]]],
         };
-    }, [fetchInitialLocations, loadStoredLocations]);
 
-    return { locations, loading, updateLocationAddress };
+        // Save the updated path in local storage
+        localStorage.setItem(
+          `path${loc.userId}`,
+          JSON.stringify(acc[loc.userId].path)
+        );
+
+        return acc;
+      }, {});
+
+      setLocations((prevLocations) => ({
+        ...prevLocations,
+        ...updatedLocations,
+      }));
+
+      if (initialLocations.length > 0) {
+        const firstLoc = initialLocations[0];
+        setMapCenter({
+          lat: firstLoc.coordinates[1],
+          lng: firstLoc.coordinates[0],
+        });
+        setZoom(14);
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching locations:", error);
+      setLoading(false);
+    }
+  }, [setMapCenter, setZoom]);
+
+  const updateLocationAddress = (userId, address) => {
+    setLocations((prevLocations) => ({
+      ...prevLocations,
+      [userId]: {
+        ...prevLocations[userId],
+        address,
+      },
+    }));
+  };
+
+  useEffect(() => {
+    const storedLocations = loadStoredLocations();
+    if (Object.keys(storedLocations).length > 0) {
+      setLocations(storedLocations);
+      const firstStoredLocation = Object.values(storedLocations)[0];
+      setMapCenter({
+        lat: firstStoredLocation.latitude,
+        lng: firstStoredLocation.longitude,
+      });
+      setZoom(14);
+    } else {
+      fetchInitialLocations();
+    }
+
+    socket.on("location-updated", (newLocation) => {
+      setLocations((prevLocations) => {
+        const updatedPath = [
+          ...(prevLocations[newLocation.userId]?.path || []),
+          [newLocation.latitude, newLocation.longitude],
+        ];
+
+        const updatedLocations = {
+          ...prevLocations,
+          [newLocation.userId]: {
+            ...prevLocations[newLocation.userId],
+            longitude: newLocation.longitude,
+            latitude: newLocation.latitude,
+            name: newLocation.userName,
+            icon: newLocation.iconUrl,
+            lastUpdated: new Date(), // Set the current time as last updated time
+            path: updatedPath, 
+          },
+        };
+
+        localStorage.setItem(
+          `path${newLocation.userId}`,
+          JSON.stringify(updatedPath)
+        );
+
+        setMapCenter({ lat: newLocation.latitude, lng: newLocation.longitude });
+        setZoom(14);
+
+        return updatedLocations;
+      });
+    });
+
+    return () => {
+      socket.off("location-updated");
+    };
+  }, [fetchInitialLocations, loadStoredLocations]);
+
+  return { locations, loading, updateLocationAddress };
 };
 
 const MapComponent = () => {
@@ -126,7 +163,7 @@ const MapComponent = () => {
             geocoder.geocode({ location: latlng }, (results, status) => {
                 if (status === 'OK' && results[0]) {
                     resolve(results[0].formatted_address);
-                    updateLocationAddress(userId, results[0].formatted_address); // Update address
+                    updateLocationAddress(userId, results[0].formatted_address); 
                 } else {
                     reject('Geocoder failed');
                 }
@@ -139,7 +176,7 @@ const MapComponent = () => {
             if (!loc.address) {
                 getNearestLocation(loc.latitude, loc.longitude, id)
                     .then((address) => {
-                        updateLocationAddress(id, address); // Update address
+                        updateLocationAddress(id, address);
                     })
                     .catch((err) => console.error(err));
             }
