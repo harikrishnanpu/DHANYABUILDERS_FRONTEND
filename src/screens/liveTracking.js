@@ -104,7 +104,7 @@ const useMapLocations = (setMapCenter, setZoom) => {
       fetchInitialLocations();
     }
 
-    socket.on("location-updated", (newLocation) => {
+    const handleLocationUpdate = (newLocation) => {
       setLocations((prevLocations) => {
         const updatedPath = [
           ...(prevLocations[newLocation.userId]?.path || []),
@@ -129,20 +129,26 @@ const useMapLocations = (setMapCenter, setZoom) => {
           JSON.stringify(updatedPath)
         );
 
+        // Optionally set the new location as the map center
         setMapCenter({ lat: newLocation.latitude, lng: newLocation.longitude });
         setZoom(14);
 
         return updatedLocations;
       });
-    });
+    };
 
+    // Listen for location updates via socket
+    socket.on("location-updated", handleLocationUpdate);
+
+    // Clean up the socket listener on component unmount
     return () => {
-      socket.off("location-updated");
+      socket.off("location-updated", handleLocationUpdate);
     };
   }, [fetchInitialLocations, loadStoredLocations]);
 
   return { locations, loading, updateLocationAddress };
 };
+
 
 const MapComponent = () => {
     const [mapCenter, setMapCenter] = useState({ lat: 0, lng: 0 });

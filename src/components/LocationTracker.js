@@ -14,6 +14,7 @@ const LocationSender = () => {
             const newSocket = io('https://dhanyabuilders-backend.onrender.com/'); // Replace with your server URL
             setSocket(newSocket);
 
+
             // Function to get and send the user's location
             const sendLocation = () => {
                 if (navigator.geolocation) {
